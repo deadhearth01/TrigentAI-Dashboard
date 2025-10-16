@@ -133,19 +133,20 @@ export function NewsFeedPage() {
   };
 
   return (
-    <div className="w-full h-full overflow-y-auto p-6 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="w-full h-full overflow-y-auto p-3 sm:p-4 md:p-6 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+      <div className="max-w-7xl mx-auto space-y-4 md:space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-              <TrendingUp className="text-purple-600" size={32} />
-              News Feed
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2 sm:gap-3">
+              <TrendingUp className="text-purple-600" size={28} />
+              <span className="hidden sm:inline">News Feed</span>
+              <span className="sm:hidden">News</span>
             </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">
+            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">
               {selectedCategory === 'ai-trends' 
-                ? '🤖 Latest AI & Technology Trends - Artificial Intelligence News'
-                : 'Stay updated with the latest news from around the world'
+                ? '🤖 AI & Tech Trends'
+                : 'Latest news worldwide'
               }
             </p>
           </div>
@@ -154,50 +155,54 @@ export function NewsFeedPage() {
         {/* Search & Filters */}
         <Card className="bg-white dark:bg-gray-800 shadow-lg">
           <CardBody>
-            <div className="flex flex-col md:flex-row gap-3">
+            <div className="flex flex-col gap-3">
               {/* Search Input */}
               <Input
                 placeholder="Search news..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                startContent={<Search size={20} className="text-gray-400" />}
+                startContent={<Search size={18} className="text-gray-400" />}
                 size="lg"
-                className="flex-1"
                 classNames={{
-                  input: "text-base",
+                  input: "text-sm sm:text-base",
                   inputWrapper: "bg-gray-50 dark:bg-gray-700",
                 }}
               />
 
-              {/* Category Filter */}
-              <Select
-                placeholder="Category"
-                selectedKeys={selectedCategory ? [selectedCategory] : []}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="md:w-[200px]"
-                size="lg"
-                classNames={{
-                  trigger: "bg-gray-50 dark:bg-gray-700",
-                }}
-              >
-                {categories.map((cat) => (
-                  <SelectItem key={cat.value}>
-                    {cat.label}
-                  </SelectItem>
-                ))}
-              </Select>
+              {/* Filters Row */}
+              <div className="flex gap-2 sm:gap-3">
+                {/* Category Filter */}
+                <Select
+                  placeholder="Category"
+                  selectedKeys={selectedCategory ? [selectedCategory] : []}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="flex-1"
+                  size="lg"
+                  classNames={{
+                    trigger: "bg-gray-50 dark:bg-gray-700",
+                    value: "text-sm sm:text-base"
+                  }}
+                >
+                  {categories.map((cat) => (
+                    <SelectItem key={cat.value}>
+                      {cat.label}
+                    </SelectItem>
+                  ))}
+                </Select>
 
-              {/* Search Button */}
-              <Button
-                color="primary"
-                size="lg"
-                onPress={handleSearch}
-                className="bg-gradient-to-r from-purple-600 to-blue-600 md:min-w-[120px]"
-                startContent={<Search size={20} />}
-              >
-                Search
-              </Button>
+                {/* Search Button */}
+                <Button
+                  color="primary"
+                  size="lg"
+                  onPress={handleSearch}
+                  className="bg-gradient-to-r from-purple-600 to-blue-600 min-w-[100px] sm:min-w-[120px]"
+                  startContent={<Search size={18} />}
+                >
+                  <span className="hidden sm:inline">Search</span>
+                  <span className="sm:hidden">Go</span>
+                </Button>
+              </div>
             </div>
           </CardBody>
         </Card>
@@ -218,17 +223,18 @@ export function NewsFeedPage() {
           </Card>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
               {articles.map((article) => (
                 <Card
                   key={article.article_id}
                   className="bg-white dark:bg-gray-800 hover:shadow-xl transition-all duration-300 border border-gray-200 dark:border-gray-700"
-                  isPressable
-                  onPress={() => window.open(article.link, '_blank')}
                 >
                   {/* Article Image */}
                   {article.image_url && (
-                    <div className="relative h-48 overflow-hidden">
+                    <div 
+                      className="relative h-40 sm:h-48 overflow-hidden cursor-pointer"
+                      onClick={() => window.open(article.link, '_blank')}
+                    >
                       <Image
                         src={article.image_url}
                         alt={article.title}
@@ -239,8 +245,8 @@ export function NewsFeedPage() {
                       {article.category && article.category.length > 0 && (
                         <Chip
                           size="sm"
-                          className="absolute top-3 right-3 bg-purple-600/90 text-white font-semibold backdrop-blur-sm"
-                          startContent={<Tag size={14} />}
+                          className="absolute top-2 sm:top-3 right-2 sm:right-3 bg-purple-600/90 text-white font-semibold backdrop-blur-sm text-[10px] sm:text-xs"
+                          startContent={<Tag size={12} className="sm:w-3.5 sm:h-3.5" />}
                         >
                           {article.category[0]}
                         </Chip>
@@ -248,64 +254,67 @@ export function NewsFeedPage() {
                     </div>
                   )}
 
-                  <CardHeader className="flex-col items-start gap-3 px-4 pt-4 pb-2">
+                  <CardHeader className="flex-col items-start gap-2 sm:gap-3 px-3 sm:px-4 pt-3 sm:pt-4 pb-2">
                     {/* Source and Date Row */}
                     <div className="flex items-center justify-between w-full">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1.5 sm:gap-2">
                         {article.source_icon ? (
                           <Image
                             src={article.source_icon}
                             alt={article.source_name || article.source_id}
-                            className="w-5 h-5 rounded-full"
+                            className="w-4 h-4 sm:w-5 sm:h-5 rounded-full"
                           />
                         ) : (
-                          <Globe size={16} className="text-purple-600" />
+                          <Globe size={14} className="sm:w-4 sm:h-4 text-purple-600" />
                         )}
-                        <span className="text-xs text-purple-600 dark:text-purple-400 font-semibold truncate max-w-[150px]">
+                        <span className="text-[10px] sm:text-xs text-purple-600 dark:text-purple-400 font-semibold truncate max-w-[100px] sm:max-w-[150px]">
                           {article.source_name || article.source_id}
                         </span>
                       </div>
                       <Chip 
                         size="sm" 
                         variant="flat" 
-                        className="text-xs"
-                        startContent={<Clock size={12} />}
+                        className="text-[10px] sm:text-xs"
+                        startContent={<Clock size={10} className="sm:w-3 sm:h-3" />}
                       >
                         {formatDate(article.pubDate)}
                       </Chip>
                     </div>
 
                     {/* Title */}
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-white line-clamp-2 leading-tight">
+                    <h3 
+                      className="text-sm sm:text-base md:text-lg font-bold text-gray-900 dark:text-white line-clamp-2 leading-tight cursor-pointer hover:text-purple-600 transition-colors"
+                      onClick={() => window.open(article.link, '_blank')}
+                    >
                       {article.title}
                     </h3>
                   </CardHeader>
 
-                  <CardBody className="px-4 py-3 space-y-3">
+                  <CardBody className="px-3 sm:px-4 py-2 sm:py-3 space-y-2 sm:space-y-3">
                     {/* Description */}
-                    <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3 leading-relaxed">
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 line-clamp-2 sm:line-clamp-3 leading-relaxed">
                       {article.description || 'No description available'}
                     </p>
 
                     {/* Meta Information Tags */}
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-1 sm:gap-2">
                       {/* Language Tag */}
                       {article.language && (
-                        <Chip size="sm" variant="bordered" className="text-xs">
+                        <Chip size="sm" variant="bordered" className="text-[10px] sm:text-xs">
                           {article.language.toUpperCase()}
                         </Chip>
                       )}
                       
                       {/* Country Tag */}
                       {article.country && article.country.length > 0 && (
-                        <Chip size="sm" variant="bordered" className="text-xs">
+                        <Chip size="sm" variant="bordered" className="text-[10px] sm:text-xs">
                           {article.country[0].toUpperCase()}
                         </Chip>
                       )}
 
                       {/* Creator/Author Tag */}
                       {article.creator && article.creator.length > 0 && (
-                        <Chip size="sm" variant="flat" color="secondary" className="text-xs">
+                        <Chip size="sm" variant="flat" color="secondary" className="text-[10px] sm:text-xs">
                           By {article.creator[0]}
                         </Chip>
                       )}
@@ -313,13 +322,13 @@ export function NewsFeedPage() {
 
                     {/* Keywords/Tags */}
                     {article.keywords && article.keywords.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5">
-                        {article.keywords.slice(0, 4).map((keyword, idx) => (
+                      <div className="flex flex-wrap gap-1 sm:gap-1.5">
+                        {article.keywords.slice(0, 3).map((keyword, idx) => (
                           <Chip 
                             key={idx} 
                             size="sm" 
                             variant="dot" 
-                            className="text-xs"
+                            className="text-[10px] sm:text-xs"
                             color="primary"
                           >
                             {keyword}
@@ -329,13 +338,13 @@ export function NewsFeedPage() {
                     )}
                   </CardBody>
 
-                  <CardFooter className="px-4 pb-4 pt-2">
+                  <CardFooter className="px-3 sm:px-4 pb-3 sm:pb-4 pt-2">
                     <Button
                       size="sm"
                       variant="flat"
                       color="primary"
-                      endContent={<ExternalLink size={16} />}
-                      className="w-full font-medium"
+                      endContent={<ExternalLink size={14} className="sm:w-4 sm:h-4" />}
+                      className="w-full font-medium text-xs sm:text-sm"
                       onPress={() => window.open(article.link, '_blank')}
                     >
                       Read Full Article
@@ -347,13 +356,13 @@ export function NewsFeedPage() {
 
             {/* Load More Button */}
             {hasMore && (
-              <div className="flex justify-center pt-4">
+              <div className="flex justify-center pt-2 sm:pt-4">
                 <Button
                   size="lg"
                   variant="bordered"
                   onPress={loadMore}
                   isLoading={loading}
-                  className="min-w-[200px]"
+                  className="min-w-[160px] sm:min-w-[200px] text-sm sm:text-base"
                 >
                   {loading ? 'Loading...' : 'Load More News'}
                 </Button>
