@@ -1,0 +1,205 @@
+# Icons Needed for TrigentAI Dashboard
+
+## NAVIGATION & LAYOUT ICONS
+- 🏠 Home/Dashboard
+- 🤖 AI Agent (Bot/Robot)
+- 📊 BI Agent (Chart/Analytics)
+- 📈 GX Agent (Growth/Trending Up)
+- ⚙️ Settings
+- 🔔 Notifications
+- 👤 User Profile
+- 🚪 Logout
+- ☰ Menu/Hamburger
+
+## SWOT ANALYSIS ICONS
+- 💪 Strengths (Strong Arm/Shield)
+- ⚠️ Weaknesses (Warning/Caution)
+- 🎯 Opportunities (Target/Bullseye)
+- ⚡ Threats (Lightning/Alert)
+- 📋 SWOT Matrix Grid
+- ✏️ Edit SWOT
+- 💾 Save SWOT
+- 📥 Export SWOT
+
+## GROWTH ANALYSIS ICONS
+- 📈 Growth Chart
+- 📊 Bar Graph
+- 📉 Decline Trend
+- 🎯 Target Goals
+- 🚀 Launch/Rocket
+- 💹 Stock Market Up
+- 📅 Calendar/Timeline
+- 🔄 Refresh/Sync
+- 🎲 Forecast/Prediction
+- 🏆 Achievement/Trophy
+
+## COMPETITIVE ANALYSIS ICONS
+- 🗺️ Map/Location Pin
+- 🌍 Globe (Global Market)
+- 🏙️ City/Location
+- 📍 Pin Location
+- 🔍 Search/Magnify
+- 🏢 Company/Building
+- 👥 Competitors
+- ⚔️ Competition/VS
+- 🎯 Market Target
+- 📊 Market Share
+
+## NEWS FEED ICONS
+- 📰 Newspaper
+- 📢 Megaphone/Announcement
+- 🔔 Bell/Notification
+- ⏰ Clock/Time
+- 🔗 Link/URL
+- 📎 Attachment
+- 💬 Comments/Chat
+- ❤️ Like/Heart
+- 🔖 Bookmark
+- 📤 Share
+
+## DATA & ANALYTICS ICONS
+- 📊 Chart
+- 📈 Line Graph
+- 🥧 Pie Chart
+- 📉 Trending Down
+- 💾 Database
+- 📁 Folder
+- 📄 Document
+- 📥 Download
+- 📤 Upload
+- 🔄 Sync/Refresh
+- 🗃️ Archive
+- 💿 Storage
+
+## AUTOMATION & AI ICONS
+- ⚡ Automation/Lightning
+- 🤖 Robot/AI
+- 🧠 Brain/Intelligence
+- ✨ Sparkles/Magic
+- 🎯 Target Automation
+- 🔗 Connect/Link
+- ▶️ Play/Execute
+- ⏸️ Pause
+- ⏹️ Stop
+- 🔁 Loop/Repeat
+
+## SOCIAL MEDIA ICONS
+- 📸 Camera/Instagram
+- 📘 Facebook
+- 🐦 Twitter/X
+- 💼 LinkedIn
+- 📹 YouTube
+- 📱 Mobile/App
+- 🖼️ Image/Photo
+- ✍️ Write/Edit
+- 📝 Caption/Text
+- #️⃣ Hashtag
+
+## THEME CUSTOMIZATION ICONS
+- 🎨 Palette/Colors
+- 🖌️ Brush/Paint
+- 🌙 Dark Mode
+- ☀️ Light Mode
+- 🌈 Rainbow/Multi-color
+- 🏢 Company Logo
+- 🎭 Theme/Style
+- 💄 Customize
+- 🔲 Layout
+- 📐 Design
+
+## ACTION ICONS
+- ➕ Add/Plus
+- ✏️ Edit/Pencil
+- 🗑️ Delete/Trash
+- 💾 Save/Floppy
+- ❌ Close/Cancel
+- ✅ Confirm/Check
+- 🔙 Back/Return
+- ➡️ Forward/Next
+- 🔄 Refresh
+- 🔍 Search
+- 🔒 Lock/Secure
+- 🔓 Unlock
+- ⚙️ Settings/Gear
+
+## STATUS & FEEDBACK ICONS
+- ✅ Success/Check
+- ❌ Error/Cross
+- ⚠️ Warning
+- ℹ️ Information
+- ⏳ Loading/Hourglass
+- 🟢 Active/Green Dot
+- 🔴 Inactive/Red Dot
+- 🟡 Pending/Yellow Dot
+- ⏱️ Timer/Clock
+- 📊 Progress Bar
+
+## REPORT & EXPORT ICONS
+- 📄 PDF
+- 📊 CSV
+- 📈 Excel/Spreadsheet
+- 📋 Copy
+- 📤 Export
+- 📥 Import
+- 🖨️ Print
+- 📧 Email Report
+- 🔗 Share Link
+
+## FILE TYPE ICONS
+- 📊 .xlsx (Excel)
+- 📄 .pdf (PDF)
+- 📝 .csv (CSV)
+- 🖼️ .jpg/.png (Image)
+- 📋 .txt (Text)
+- 📦 .zip (Archive)
+
+## WORKSPACE & TEAM ICONS
+- 💼 Workspace
+- 👥 Team/Users
+- 👤 Single User
+- 🎯 Projects
+- 📂 Folders
+- 🏷️ Tags
+- ⭐ Favorites
+- 📌 Pinned
+
+## SUGGESTED ICON SOURCES:
+1. **Lucide React** (Already installed) - https://lucide.dev/
+   - Clean, consistent, open source
+   - Perfect for professional dashboards
+   
+2. **Heroicons** - https://heroicons.com/
+   - By Tailwind team, matches your UI library
+   
+3. **Tabler Icons** - https://tabler-icons.io/
+   - 4000+ icons, MIT license
+   
+4. **Remix Icon** - https://remixicon.com/
+   - Neutral style, perfect for business apps
+   
+5. **Phosphor Icons** - https://phosphoricons.com/
+   - Flexible, modern design system
+
+6. **React Icons** - https://react-icons.github.io/react-icons/
+   - Collection of popular icon sets in one package
+
+## PRIORITY ICONS TO SOURCE:
+1. SWOT matrix/grid icon (create custom or combine existing)
+2. Competitor analysis dashboard icon
+3. News feed aggregator icon
+4. Global competition map icon
+5. Location-based analytics icon
+6. Custom theme builder icon
+7. Growth forecast chart icon
+8. Market intelligence icon
+9. Trend analysis icon
+10. Strategic planning icon
+
+## CUSTOM ICONS NEEDED (May need design):
+- TrigentAI Logo variations
+- Company branding placeholder
+- Custom SWOT quadrant diagram
+- Competitive landscape visualization
+- Market positioning matrix
+- Growth trajectory chart
+
