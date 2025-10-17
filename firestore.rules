@@ -1,0 +1,174 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function isWorkspaceMember(workspaceId) {
+      return isAuthenticated() && 
+             exists(/databases/$(database)/documents/workspaces/$(workspaceId)/members/$(request.auth.uid));
+    }
+    
+    function hasSubscription() {
+      return isAuthenticated() && 
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.subscription.plan in ['pro', 'business', 'enterprise'];
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      allow update, delete: if isOwner(userId);
+      
+      // User settings subcollection
+      match /settings/{settingId} {
+        allow read, write: if isOwner(userId);
+      }
+      
+      // User activity logs
+      match /activity/{activityId} {
+        allow read: if isOwner(userId);
+        allow create: if isAuthenticated();
+      }
+    }
+    
+    // Workspaces collection
+    match /workspaces/{workspaceId} {
+      allow read: if isWorkspaceMember(workspaceId);
+      allow create: if isAuthenticated();
+      allow update, delete: if isWorkspaceMember(workspaceId) && 
+                              get(/databases/$(database)/documents/workspaces/$(workspaceId)).data.ownerId == request.auth.uid;
+      
+      // Workspace members
+      match /members/{memberId} {
+        allow read: if isWorkspaceMember(workspaceId);
+        allow create, update, delete: if get(/databases/$(database)/documents/workspaces/$(workspaceId)).data.ownerId == request.auth.uid;
+      }
+      
+      // Workspace AI instructions
+      match /instructions/{instructionId} {
+        allow read, write: if isWorkspaceMember(workspaceId);
+      }
+      
+      // Workspace analytics
+      match /analytics/{analyticsId} {
+        allow read, write: if isWorkspaceMember(workspaceId);
+      }
+    }
+    
+    // Agents collection (BI, AI, GX agents data)
+    match /agents/{agentId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() && 
+                              resource.data.userId == request.auth.uid;
+      
+      // Agent conversations/sessions
+      match /sessions/{sessionId} {
+        allow read, write: if isAuthenticated() && 
+                             get(/databases/$(database)/documents/agents/$(agentId)).data.userId == request.auth.uid;
+      }
+      
+      // Agent generated content
+      match /content/{contentId} {
+        allow read, write: if isAuthenticated() && 
+                             get(/databases/$(database)/documents/agents/$(agentId)).data.userId == request.auth.uid;
+      }
+    }
+    
+    // Automations collection
+    match /automations/{automationId} {
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      
+      // Automation logs
+      match /logs/{logId} {
+        allow read: if isAuthenticated() && 
+                      get(/databases/$(database)/documents/automations/$(automationId)).data.userId == request.auth.uid;
+        allow create: if isAuthenticated();
+      }
+    }
+    
+    // Reports collection (BI Agent reports)
+    match /reports/{reportId} {
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+    
+    // SWOT Analysis collection
+    match /swot_analyses/{swotId} {
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+    
+    // Competitive Analysis collection
+    match /competitive_analyses/{competitiveId} {
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      
+      // Competitor data
+      match /competitors/{competitorId} {
+        allow read, write: if isAuthenticated() && 
+                             get(/databases/$(database)/documents/competitive_analyses/$(competitiveId)).data.userId == request.auth.uid;
+      }
+    }
+    
+    // Growth Strategies collection (GX Agent)
+    match /growth_strategies/{strategyId} {
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+    
+    // Social Media Content collection (AI Agent)
+    match /social_content/{contentId} {
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+    
+    // Integrations/Connections collection
+    match /connections/{connectionId} {
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+    
+    // Subscriptions collection
+    match /subscriptions/{subscriptionId} {
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create, update: if isAuthenticated();
+    }
+    
+    // Usage tracking for API limits
+    match /usage/{usageId} {
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create, update: if isAuthenticated();
+    }
+    
+    // News feed cache (public read for authenticated users)
+    match /news_cache/{newsId} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Only backend can write
+    }
+    
+    // System notifications
+    match /notifications/{notificationId} {
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+  }
+}

@@ -1,0 +1,78 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+    
+    function isValidImageUpload() {
+      return request.resource.size < 10 * 1024 * 1024 // 10MB limit
+             && request.resource.contentType.matches('image/.*');
+    }
+    
+    function isValidFileUpload() {
+      return request.resource.size < 50 * 1024 * 1024; // 50MB limit
+    }
+    
+    // User profile images
+    match /users/{userId}/profile/{imageId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && isOwner(userId) && isValidImageUpload();
+      allow delete: if isAuthenticated() && isOwner(userId);
+    }
+    
+    // Workspace files
+    match /workspaces/{workspaceId}/{allPaths=**} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && isValidFileUpload();
+      allow delete: if isAuthenticated();
+    }
+    
+    // AI Agent generated images (social media content)
+    match /social-content/{userId}/{contentId}/{imageId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && isOwner(userId) && isValidImageUpload();
+      allow delete: if isAuthenticated() && isOwner(userId);
+    }
+    
+    // Reports and exports
+    match /reports/{userId}/{reportId}/{fileName} {
+      allow read: if isAuthenticated() && isOwner(userId);
+      allow write: if isAuthenticated() && isOwner(userId) && isValidFileUpload();
+      allow delete: if isAuthenticated() && isOwner(userId);
+    }
+    
+    // Automation outputs
+    match /automations/{userId}/{automationId}/{fileName} {
+      allow read: if isAuthenticated() && isOwner(userId);
+      allow write: if isAuthenticated() && isOwner(userId) && isValidFileUpload();
+      allow delete: if isAuthenticated() && isOwner(userId);
+    }
+    
+    // Analytics data exports
+    match /analytics/{userId}/{exportId}/{fileName} {
+      allow read: if isAuthenticated() && isOwner(userId);
+      allow write: if isAuthenticated() && isOwner(userId) && isValidFileUpload();
+      allow delete: if isAuthenticated() && isOwner(userId);
+    }
+    
+    // Temporary uploads (24 hour expiration)
+    match /temp/{userId}/{tempId} {
+      allow read, write: if isAuthenticated() && isOwner(userId) && isValidFileUpload();
+      allow delete: if isAuthenticated() && isOwner(userId);
+    }
+    
+    // Public assets (read-only for authenticated users)
+    match /public/{allPaths=**} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Only admin can write
+    }
+  }
+}

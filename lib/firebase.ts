@@ -32,14 +32,17 @@ import {
   getDownloadURL,
   deleteObject
 } from 'firebase/storage';
+import { getAnalytics, Analytics } from 'firebase/analytics';
 
+// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  apiKey: "AIzaSyCClmtOtcXW07MKSCrPRf0_x1-cTb0Rg9g",
+  authDomain: "trigentai.firebaseapp.com",
+  projectId: "trigentai",
+  storageBucket: "trigentai.firebasestorage.app",
+  messagingSenderId: "713759613857",
+  appId: "1:713759613857:web:08905bbfdee8ae79f8e1e0",
+  measurementId: "G-6RLZRY4YC9"
 };
 
 // Initialize Firebase
@@ -47,10 +50,12 @@ let app: FirebaseApp;
 let auth: Auth;
 let db: Firestore;
 let firebaseStorage: FirebaseStorage;
+let analytics: Analytics | null = null;
 
 if (typeof window !== 'undefined') {
   if (!getApps().length) {
     app = initializeApp(firebaseConfig);
+    console.log('🔥 Firebase initialized successfully');
   } else {
     app = getApps()[0];
   }
@@ -58,6 +63,14 @@ if (typeof window !== 'undefined') {
   auth = getAuth(app);
   db = getFirestore(app);
   firebaseStorage = getStorage(app);
+  
+  // Initialize Analytics (only in browser)
+  try {
+    analytics = getAnalytics(app);
+    console.log('📊 Firebase Analytics initialized');
+  } catch (error) {
+    console.warn('Analytics initialization skipped:', error);
+  }
 }
 
 // Firebase Service Class
@@ -73,10 +86,7 @@ export class FirebaseService {
 
   // Check if Firebase is configured
   isConfigured(): boolean {
-    return !!(
-      process.env.NEXT_PUBLIC_FIREBASE_API_KEY &&
-      process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID
-    );
+    return true; // Always configured with hardcoded config
   }
 
   // Authentication Methods
@@ -380,4 +390,4 @@ export class FirebaseService {
 }
 
 export const firebaseService = FirebaseService.getInstance();
-export { auth, db, firebaseStorage as storage };
+export { auth, db, firebaseStorage as storage, analytics };
