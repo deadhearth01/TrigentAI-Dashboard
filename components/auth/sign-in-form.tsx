@@ -6,6 +6,14 @@ import { Chrome, User, Settings, Shield, Zap } from 'lucide-react';
 import { useAuthStore } from '@/lib/store';
 import { localDB } from '@/lib/local-db';
 import { TrigentLogo } from '@/components/ui/trigent-logo';
+import { 
+  signInWithPopup, 
+  GoogleAuthProvider, 
+  OAuthProvider,
+  signInAnonymously 
+} from 'firebase/auth';
+import { auth } from '@/lib/firebase';
+import DatabaseService from '@/lib/database';
 
 export function SignInForm() {
   const [isLoading, setIsLoading] = useState(false);
@@ -26,11 +34,45 @@ export function SignInForm() {
         await localDB.createUser(guestUser);
         setUser(guestUser);
       } else {
-        // TODO: Implement Supabase Google Auth
-        console.log('Google sign-in for cloud mode - implement with Supabase');
+        // Firebase Google Auth
+        const provider = new GoogleAuthProvider();
+        provider.addScope('email');
+        provider.addScope('profile');
+        
+        const result = await signInWithPopup(auth, provider);
+        const firebaseUser = result.user;
+        
+        // Check if user exists in Firestore
+        let dbUser = await DatabaseService.getUser(firebaseUser.uid);
+        
+        if (!dbUser) {
+          // Create new user in Firestore
+          const workspaceId = await DatabaseService.initializeNewUser(firebaseUser.uid, {
+            email: firebaseUser.email!,
+            displayName: firebaseUser.displayName || 'User',
+            photoURL: firebaseUser.photoURL || undefined,
+            provider: 'google',
+          });
+          
+          console.log('New user created with workspace:', workspaceId);
+          dbUser = await DatabaseService.getUser(firebaseUser.uid);
+        } else {
+          // Update last login
+          await DatabaseService.updateLastLogin(firebaseUser.uid);
+        }
+        
+        // Set user in auth store
+        setUser({
+          id: firebaseUser.uid,
+          email: firebaseUser.email!,
+          name: firebaseUser.displayName || 'User',
+          provider: 'google',
+          created_at: firebaseUser.metadata.creationTime || new Date().toISOString(),
+        });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Sign-in error:', error);
+      alert(error.message || 'Failed to sign in with Google');
     } finally {
       setIsLoading(false);
     }
@@ -51,11 +93,45 @@ export function SignInForm() {
         await localDB.createUser(microsoftUser);
         setUser(microsoftUser);
       } else {
-        // TODO: Implement Supabase Microsoft Auth
-        console.log('Microsoft sign-in for cloud mode - implement with Supabase');
+        // Firebase Microsoft Auth
+        const provider = new OAuthProvider('microsoft.com');
+        provider.addScope('email');
+        provider.addScope('profile');
+        
+        const result = await signInWithPopup(auth, provider);
+        const firebaseUser = result.user;
+        
+        // Check if user exists in Firestore
+        let dbUser = await DatabaseService.getUser(firebaseUser.uid);
+        
+        if (!dbUser) {
+          // Create new user in Firestore
+          const workspaceId = await DatabaseService.initializeNewUser(firebaseUser.uid, {
+            email: firebaseUser.email!,
+            displayName: firebaseUser.displayName || 'User',
+            photoURL: firebaseUser.photoURL || undefined,
+            provider: 'microsoft',
+          });
+          
+          console.log('New user created with workspace:', workspaceId);
+          dbUser = await DatabaseService.getUser(firebaseUser.uid);
+        } else {
+          // Update last login
+          await DatabaseService.updateLastLogin(firebaseUser.uid);
+        }
+        
+        // Set user in auth store
+        setUser({
+          id: firebaseUser.uid,
+          email: firebaseUser.email!,
+          name: firebaseUser.displayName || 'User',
+          provider: 'microsoft',
+          created_at: firebaseUser.metadata.creationTime || new Date().toISOString(),
+        });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Sign-in error:', error);
+      alert(error.message || 'Failed to sign in with Microsoft');
     } finally {
       setIsLoading(false);
     }
@@ -64,17 +140,45 @@ export function SignInForm() {
   const handleGuestLogin = async () => {
     setIsLoading(true);
     try {
-      const guestUser = {
-        id: 'guest-' + Date.now(),
-        email: 'guest@trigentai.local',
-        name: 'Guest User',
-        provider: 'guest' as const,
-        created_at: new Date().toISOString(),
-      };
-      await localDB.createUser(guestUser);
-      setUser(guestUser);
-    } catch (error) {
+      if (mode === 'local') {
+        const guestUser = {
+          id: 'guest-' + Date.now(),
+          email: 'guest@trigentai.local',
+          name: 'Guest User',
+          provider: 'guest' as const,
+          created_at: new Date().toISOString(),
+        };
+        await localDB.createUser(guestUser);
+        setUser(guestUser);
+      } else {
+        // Firebase Anonymous Auth
+        const result = await signInAnonymously(auth);
+        const firebaseUser = result.user;
+        
+        // Create guest user in Firestore
+        let dbUser = await DatabaseService.getUser(firebaseUser.uid);
+        
+        if (!dbUser) {
+          const workspaceId = await DatabaseService.initializeNewUser(firebaseUser.uid, {
+            email: 'guest@trigentai.app',
+            displayName: 'Guest User',
+            provider: 'guest',
+          });
+          
+          console.log('Guest user created with workspace:', workspaceId);
+        }
+        
+        setUser({
+          id: firebaseUser.uid,
+          email: 'guest@trigentai.app',
+          name: 'Guest User',
+          provider: 'guest',
+          created_at: firebaseUser.metadata.creationTime || new Date().toISOString(),
+        });
+      }
+    } catch (error: any) {
       console.error('Guest login error:', error);
+      alert(error.message || 'Failed to sign in as guest');
     } finally {
       setIsLoading(false);
     }

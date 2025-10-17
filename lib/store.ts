@@ -19,11 +19,21 @@ export interface User {
 export interface Workspace {
   id: string;
   name: string;
-  description: string;
-  color: string;
+  description?: string;
+  ownerId?: string;
+  icon?: string;
+  color?: string;
+  aiInstructions?: string;
+  settings?: {
+    visibility: 'private' | 'team' | 'public';
+    defaultAgentMode?: 'BI' | 'AI' | 'GX';
+  };
+  createdAt?: Date;
+  updatedAt?: Date;
+  // Legacy fields for compatibility
+  created_at?: string;
+  user_id?: string;
   ai_instructions?: string;
-  created_at: string;
-  user_id: string;
   agent_type?: 'bi' | 'ai' | 'gx' | 'all';
 }
 
@@ -33,7 +43,7 @@ export interface AuthState {
   mode: 'local' | 'cloud';
   currentWorkspace: Workspace | null;
   workspaces: Workspace[];
-  setUser: (user: User) => void;
+  setUser: (user: User | null) => void;
   logout: () => void;
   setMode: (mode: 'local' | 'cloud') => void;
   updateSubscription: (subscription: User['subscription']) => void;
@@ -53,7 +63,12 @@ export const useAuthStore = create<AuthState>()(
       mode: (process.env.NEXT_PUBLIC_MODE as 'local' | 'cloud') || 'local',
       currentWorkspace: null,
       workspaces: [],
-      setUser: (user: User) => {
+      setUser: (user: User | null) => {
+        if (!user) {
+          set({ user: null, isAuthenticated: false, currentWorkspace: null });
+          return;
+        }
+        
         // Initialize trial for new users
         if (!user.subscription && user.provider !== 'guest') {
           const trialStart = new Date();
